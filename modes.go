@@ -26,7 +26,7 @@ func Hard(size int) []int {
 	a := make([]int, 2*size + 1)
 
 	for i := 0; i < size; i++ {
-		a[i] = i + 1
+		a[i] = i
 	}
 
 	for i := size; i < 2*size+1; i++ {
@@ -40,7 +40,7 @@ func ExtraHard(size int) []int {
 	a := make([]int, 2*size + 1)
 
 	for i := 0; i < size; i++ {
-		a[i] = i
+		a[i] = i + 1
 	}
 
 	for i := size; i < 2*size+1; i++ {
