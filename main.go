@@ -10,6 +10,8 @@ import (
 
 type Game struct {
 	Tiles []int
+	Mode Mode
+	Size int
 }
 
 func Abs(i int) int {
@@ -23,27 +25,30 @@ func Diff(i, j int) int {
 	return Abs(i - j)
 }
 
+
+
 // Creates a new game. Size is relative to the difficulty
 // There are 4 modes that I had on the original game
-func NewGame(size int) *Game {
-	g := &Game{make([]int, size)}
-	// g := &Game{make([]int, 2*size+1)} // Hard modes
-
-	for i := 0; i < size; i++ {
-		g.Tiles[i] = i + 1 // Easy mode
-		// g.Tiles[i] = i // Medium mode
-	}
-
-	// for i := size; i < 2*size+1; i++ {
-	// 	g.Tiles[i] = 2*size+1 - i // Hard mode (corresponds with easy mode)
-	// 	g.Tiles[i] = 2*size - i // Extra hard mode (corresponds with medium mode)
-	// }
+func NewGame(mode Mode, size int) *Game {
+	g := &Game{mode(size), mode, size}
 
 	rand.Shuffle(len(g.Tiles), func(i, j int) {
 	    g.Tiles[i], g.Tiles[j] = g.Tiles[j], g.Tiles[i]
 	})
 	
 	return g
+}
+
+func (g *Game) Won() bool {
+	win := g.Mode(g.Size)
+
+	for i, v := range g.Tiles {
+		if v != win[i] {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (g *Game) Swap(i, j int) bool {
@@ -138,7 +143,63 @@ func (g *Game) Selected(j int) string {
 func main() {
 	rand.Seed(time.Now().Unix())
 
-	g := NewGame(16)
-	fmt.Println(g)
-	fmt.Println(g.Selected(6))
+	g := NewGame(Easy, 16)
+	swaps := 0
+
+	selected := -1
+	for !g.Won() {
+		if selected == -1 {
+			fmt.Println(g)
+
+			for selected <= 0 || selected > len(g.Tiles) {
+				fmt.Print("Select a tile to swap > ")
+				fmt.Scanln(&selected)
+			}
+			
+			selected--
+
+			if len(g.CanSwapWith(selected)) == 0 {
+				fmt.Println("No swaps available with this tile")
+				selected = -1
+			}
+
+		} else {
+			fmt.Println(g.Selected(selected))
+
+			choices := g.CanSwapWith(selected)
+			choice := -1
+			for choice == -1 {
+				fmt.Print("Select a tile to swap with (Choose 0 to cancel selection)> ")
+				fmt.Scanln(&choice)
+
+				choice--
+
+				if choice == -1 {
+					break
+				}
+
+				match := false
+				for _, v := range choices {
+					if choice == v {
+						match = true
+						break
+					}
+				}
+
+				if !match {
+					choice = -1
+				}
+			}
+
+			if g.Swap(selected, choice) {
+				swaps++
+			}
+
+			selected = -1
+		}
+
+		fmt.Println()
+	}
+
+	fmt.Printf("Congratulations! You won in %d swaps!", swaps + 1)
 }
