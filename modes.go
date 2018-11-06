@@ -6,7 +6,7 @@ func Easy(size int) []int {
 	a := make([]int, size)
 
 	for i := 0; i < size; i++ {
-		a[i] = i + 1
+		a[i] = i 
 	}
 
 	return a
@@ -16,7 +16,7 @@ func Medium(size int) []int {
 	a := make([]int, size)
 
 	for i := 0; i < size; i++ {
-		a[i] = i
+		a[i] = i + 1
 	}
 
 	return a
@@ -30,7 +30,7 @@ func Hard(size int) []int {
 	}
 
 	for i := size; i < 2*size+1; i++ {
-		a[i] = 2*size+1 - i
+		a[i] = 2*size - i
 	}
 
 	return a
@@ -44,7 +44,7 @@ func ExtraHard(size int) []int {
 	}
 
 	for i := size; i < 2*size+1; i++ {
-		a[i] = 2*size - i
+		a[i] = 2*size+1 - i
 	}
 
 	return a
