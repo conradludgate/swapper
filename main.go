@@ -147,8 +147,41 @@ func (g *Game) Selected(j int) string {
 func main() {
 	rand.Seed(time.Now().Unix())
 
-	g := NewGame(Easy, 16)
+	fmt.Println("What difficulty would you like to play?")
+	
+	diff := 0
+	for diff < 1 || diff > 4 {
+		fmt.Print("1 for Easy, 2 for Medium, 3 for Hard and 4 for Extra Hard > ")
+		fmt.Scan(&diff)
+	}
+
+	fmt.Println("You have selected", 
+		[]string{
+			color.GreenString("Easy"),
+			color.YellowString("Medium"), 
+			color.MagentaString("Hard"), 
+			color.RedString("Extra Hard"),
+		}[diff-1], "mode")
+	fmt.Println()
+
+	size := 0
+	for size <= 0 {
+		fmt.Print("What size game board would you like to play with? ")
+		fmt.Scan(&size)
+	}
+
+	fmt.Println()
+
+	g := NewGame([]Mode{Easy, Medium, Hard, ExtraHard}[diff-1], size)
 	swaps := 0
+
+	fmt.Println("Your goal is to move the tiles into this layout")
+	fmt.Println(&Game{g.Mode(size), g.Mode, size})
+
+	fmt.Println("You can only swap tiles if the distance between them matches one of the values on the tiles")
+	fmt.Println("Good luck")
+
+	fmt.Println()
 
 	selected := -1
 	for !g.Won() {
@@ -203,6 +236,7 @@ func main() {
 		}
 
 		fmt.Println()
+		fmt.Printf("Swaps: %3d\n", swaps)
 	}
 
 	fmt.Println(g)
