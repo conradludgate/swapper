@@ -52,11 +52,11 @@ func (g *Game) Won() bool {
 }
 
 func (g *Game) Swap(i, j int) bool {
-	if i >= len(g.Tiles) {
+	if i < 0 || i >= len(g.Tiles) {
 		return false
 	}
 
-	if j >= len(g.Tiles) {
+	if j < 0 || j >= len(g.Tiles) {
 		return false
 	}
 
@@ -94,7 +94,7 @@ func (g *Game) CanSwapWith(i int) []int {
 		}
 
 		if Diff(i, j) == v {
-			swaps = append(swaps, i + v)
+			swaps = append(swaps, j)
 		}
 	}
 
@@ -119,12 +119,16 @@ func (g *Game) Selected(j int) string {
 
 	out += "\n"
 
+	win := g.Mode(g.Size)
+
 	for i, v := range g.Tiles {
 		var c func(format string, a ...interface{}) string
 		if i == swaps[si] {
 			si++
 			c = color.RedString
 		} else if i == j {
+			c = color.YellowString
+		} else if v == win[i] {
 			c = color.GreenString
 		} else {
 			c = fmt.Sprintf
@@ -200,6 +204,8 @@ func main() {
 
 		fmt.Println()
 	}
+
+	fmt.Println(g)
 
 	fmt.Printf("Congratulations! You won in %d swaps!", swaps + 1)
 }
